@@ -27,9 +27,9 @@ export class AppComponent implements OnInit {
 
 		for (let citie of this.cCities) {
 			marks.push(
-				L.marker([citie.latitude, citie.longitude]).bindPopup(
-					L.popup({ maxWidth: 550 }).setContent(citie.nome),
-				),
+				L.circleMarker([citie.latitude, citie.longitude], {
+					color: "#3388ff",
+				}).bindPopup(L.popup({ maxWidth: 550 }).setContent(citie.nome)),
 			);
 		}
 
@@ -43,6 +43,7 @@ export class AppComponent implements OnInit {
 			center: [-10.296777, -48.310953],
 			zoom: 6,
 			layers: [cities],
+			preferCanvas: true,
 		});
 
 		this.map.setView(brazil, 5);
