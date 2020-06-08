@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
 			marksStates.push(
 				L.circleMarker([state.latitude, state.longitude], {
 					color: "#3388ff",
+					radius: 20,
 				}).bindPopup(L.popup({ maxWidth: 550 }).setContent(state.nome)),
 			);
 		}
