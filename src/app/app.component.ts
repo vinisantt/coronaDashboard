@@ -12,14 +12,16 @@ export class AppComponent implements OnInit {
 	private cCities: any;
 	private cStates: any;
 
-	constructor(public coordinates$: CoordinatesService) {}
+	constructor(public coordinates$: CoordinatesService) { }
 
 	ngOnInit() {
-		this.coordinates$.cities().subscribe((dados) => {
+		this.coordinates$.cities().subscribe(dados => {
 			this.cCities = dados;
 			this.initMap();
 		});
-		this.coordinates$.states().subscribe((dados) => (this.cStates = dados));
+		this.coordinates$.states().subscribe(dados => {
+			this.cStates = dados
+		});
 	}
 
 	initMap() {
