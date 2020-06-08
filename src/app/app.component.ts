@@ -63,8 +63,8 @@ export class AppComponent implements OnInit {
 		});
 
 		let overlayMaps = {
-			Cidades: cities,
 			Estados: states,
+			Cidades: cities,
 		};
 
 		L.control.layers(overlayMaps, null, { collapsed: false }).addTo(this.map);
