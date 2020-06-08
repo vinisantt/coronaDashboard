@@ -23,26 +23,33 @@ export class AppComponent implements OnInit {
 	}
 
 	initMap() {
-		let marks: Array<any> = [];
+		let marksCities: Array<any> = [];
+		let marksStates: Array<any> = [];
 
 		for (let citie of this.cCities) {
-			marks.push(
+			marksCities.push(
 				L.circleMarker([citie.latitude, citie.longitude], {
 					color: "#3388ff",
 				}).bindPopup(L.popup({ maxWidth: 550 }).setContent(citie.nome)),
 			);
 		}
+		for (let state of this.cStates) {
+			marksStates.push(
+				L.circleMarker([state.latitude, state.longitude], {
+					color: "#3388ff",
+				}).bindPopup(L.popup({ maxWidth: 550 }).setContent(state.nome)),
+			);
+		}
 
-		console.log(marks);
-
-		let cities = L.layerGroup(marks);
+		let cities = L.layerGroup(marksCities);
+		let states = L.layerGroup(marksStates);
 
 		let brazil = new L.LatLng(-15.7801, -47.9292);
 
 		this.map = L.map("map", {
 			center: [-10.296777, -48.310953],
 			zoom: 6,
-			layers: [cities],
+			layers: [cities, states],
 			preferCanvas: true,
 		});
 
@@ -53,6 +60,13 @@ export class AppComponent implements OnInit {
 			minZoom: 5,
 			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 		});
+
+		let overlayMaps = {
+			Cidades: cities,
+			Estados: states,
+		};
+
+		L.control.layers(overlayMaps).addTo(this.map);
 
 		tiles.addTo(this.map);
 	}
