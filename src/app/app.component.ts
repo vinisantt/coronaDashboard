@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
 			Estados: states,
 		};
 
-		L.control.layers(overlayMaps).addTo(this.map);
+		L.control.layers(overlayMaps, null, { collapsed: false }).addTo(this.map);
 
 		tiles.addTo(this.map);
 	}
