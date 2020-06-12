@@ -2,6 +2,7 @@ import { CoordinatesService } from "./coordinates.service";
 import { Component, OnInit } from "@angular/core";
 import * as L from "leaflet";
 import "leaflet-search";
+import { stat } from "fs";
 
 @Component({
 	selector: "app-root",
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit {
 			marksCities.push(
 				L.circleMarker([citie.latitude, citie.longitude], {
 					color: "#3388ff",
+					title: citie.nome,
 				}).bindPopup(L.popup({ maxWidth: 550 }).setContent(citie.nome)),
 			);
 		}
@@ -41,6 +43,7 @@ export class AppComponent implements OnInit {
 				L.circleMarker([state.latitude, state.longitude], {
 					color: "#3388ff",
 					radius: 20,
+					title: state.nome,
 				}).bindPopup(L.popup({ maxWidth: 550 }).setContent(state.nome)),
 			);
 		}
