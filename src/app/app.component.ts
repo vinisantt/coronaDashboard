@@ -1,6 +1,7 @@
 import { CoordinatesService } from "./coordinates.service";
-import { Component, AfterViewInit, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import * as L from "leaflet";
+import "leaflet-search";
 
 @Component({
 	selector: "app-root",
@@ -12,15 +13,15 @@ export class AppComponent implements OnInit {
 	private cCities: any;
 	private cStates: any;
 
-	constructor(public coordinates$: CoordinatesService) { }
+	constructor(public coordinates$: CoordinatesService) {}
 
 	ngOnInit() {
-		this.coordinates$.cities().subscribe(dados => {
+		this.coordinates$.cities().subscribe((dados) => {
 			this.cCities = dados;
 			this.initMap();
 		});
-		this.coordinates$.states().subscribe(dados => {
-			this.cStates = dados
+		this.coordinates$.states().subscribe((dados) => {
+			this.cStates = dados;
 		});
 	}
 
@@ -63,6 +64,10 @@ export class AppComponent implements OnInit {
 			minZoom: 5,
 			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 		});
+
+		var searchLayer = L.layerGroup(marksStates).addTo(this.map);
+		//... adding data in searchLayer ...
+		this.map.addControl(new L.Control.Search({ layer: searchLayer }));
 
 		let overlayMaps = {
 			Estados: states,
