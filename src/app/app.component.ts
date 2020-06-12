@@ -2,7 +2,7 @@ import { CoordinatesService } from "./coordinates.service";
 import { Component, OnInit } from "@angular/core";
 import * as L from "leaflet";
 import "leaflet-search";
-import { stat } from "fs";
+import { AppService } from "./app.service";
 
 @Component({
 	selector: "app-root",
@@ -14,38 +14,89 @@ export class AppComponent implements OnInit {
 	private cCities: any;
 	private cStates: any;
 
-	constructor(public coordinates$: CoordinatesService) {}
+	constructor(public coordinates$: CoordinatesService, public getData$: AppService) {}
 
 	ngOnInit() {
-		this.coordinates$.cities().subscribe((dados) => {
-			this.cCities = dados;
+		this.coordinates$.cities().subscribe((data) => {
+			this.cCities = data;
 			this.initMap();
 		});
-		this.coordinates$.states().subscribe((dados) => {
-			this.cStates = dados;
+		this.coordinates$.states().subscribe((data) => {
+			this.cStates = data;
 		});
 	}
 
 	initMap() {
 		let marksCities: Array<any> = [];
 		let marksStates: Array<any> = [];
+		let isClicked = false;
 
 		for (let citie of this.cCities) {
-			marksCities.push(
-				L.circleMarker([citie.latitude, citie.longitude], {
-					color: "#3388ff",
-					title: citie.nome,
-				}).bindPopup(L.popup({ maxWidth: 550 }).setContent(citie.nome)),
-			);
+			let marker = L.circleMarker([citie.latitude, citie.longitude], {
+				color: "#3388ff",
+				title: citie.nome,
+			});
+
+			marker.on({
+				mouseover: function () {
+					if (!isClicked) {
+						this.openPopup();
+					}
+				},
+				mouseout: function () {
+					if (!isClicked) {
+						this.closePopup();
+					}
+				},
+				click: function () {
+					isClicked = true;
+					this.openPopup();
+				},
+			});
+
+			this.getData$.findCity(citie.nome, citie.codigo_uf).subscribe((data) => {
+				marker.bindPopup(
+					L.popup({ maxWidth: 550 }).setContent(`
+				<h5> ${citie.nome} </h5> 
+				Casos confirmados: <b>${data["cases"]}</b></br>
+				Óbitos: <b>5</b>
+				`),
+				);
+				marksCities.push(marker);
+			});
 		}
 		for (let state of this.cStates) {
-			marksStates.push(
-				L.circleMarker([state.latitude, state.longitude], {
-					color: "#3388ff",
-					radius: 20,
-					title: state.nome,
-				}).bindPopup(L.popup({ maxWidth: 550 }).setContent(state.nome)),
+			let marker = L.circleMarker([state.latitude, state.longitude], {
+				color: "#3388ff",
+				radius: 20,
+				title: state.nome,
+			});
+
+			marker.on({
+				mouseover: function () {
+					if (!isClicked) {
+						this.openPopup();
+					}
+				},
+				mouseout: function () {
+					if (!isClicked) {
+						this.closePopup();
+					}
+				},
+				click: function () {
+					isClicked = true;
+					this.openPopup();
+				},
+			});
+
+			marker.bindPopup(
+				L.popup({ maxWidth: 650 }).setContent(`
+				<h5> ${state.nome} </h5> 
+				Casos confirmados: <b>5</b></br>
+				Óbitos: <b>5</b>
+			`),
 			);
+			marksStates.push(marker);
 		}
 
 		let cities = L.layerGroup(marksCities);
@@ -60,6 +111,15 @@ export class AppComponent implements OnInit {
 			preferCanvas: true,
 		});
 
+		this.map.on({
+			click: function () {
+				isClicked = false;
+			},
+			popupclose: function () {
+				isClicked = false;
+			},
+		});
+
 		this.map.setView(brazil, 5);
 
 		const tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -68,9 +128,9 @@ export class AppComponent implements OnInit {
 			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 		});
 
-		var searchLayer = L.layerGroup(marksStates).addTo(this.map);
+		var searchLayer = L.layerGroup(marksCities.concat(marksStates)).addTo(this.map);
 		//... adding data in searchLayer ...
-		this.map.addControl(new L.Control.Search({ layer: searchLayer }));
+		this.map.addControl(new L.Control.Search({ layer: searchLayer, zoom: 11 }));
 
 		let overlayMaps = {
 			Estados: states,

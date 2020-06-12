@@ -7,4 +7,8 @@ import { HttpClient } from "@angular/common/http";
 })
 export class AppService {
 	constructor(private http: HttpClient) {}
+
+	findCity(city: string, state: string) {
+		return this.http.get(`http://localhost:5000/cidade?nome=${city}&estado=${state}/`);
+	}
 }
