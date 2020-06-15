@@ -10,20 +10,20 @@ import { AppService } from "./app.service";
 })
 export class AppComponent implements OnInit {
 	private map;
-	private casesS: Array<any> = [];
-	private casesC: Array<any> = [];
+	private casesS: any;
+	private casesC: any;
 
 	constructor(public getData$: AppService) {}
 
 	ngOnInit() {
 		this.getData$.findStates().subscribe((data) => {
-			this.casesS.push(data);
+			this.casesS = data;
 		});
 
 		this.getData$.findCities().subscribe((data) => {
-			this.casesC.push(data);
-			this.initMap();
+			this.casesC = data;
 		});
+		this.initMap();
 	}
 
 	initMap() {
