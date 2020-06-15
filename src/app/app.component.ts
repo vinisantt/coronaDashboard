@@ -1,4 +1,3 @@
-import { CoordinatesService } from "./coordinates.service";
 import { Component, OnInit } from "@angular/core";
 import * as L from "leaflet";
 import "leaflet-search";
@@ -11,18 +10,19 @@ import { AppService } from "./app.service";
 })
 export class AppComponent implements OnInit {
 	private map;
-	private cCities: any;
-	private cStates: any;
+	private casesS: Array<any> = [];
+	private casesC: Array<any> = [];
 
-	constructor(public coordinates$: CoordinatesService, public getData$: AppService) {}
+	constructor(public getData$: AppService) {}
 
 	ngOnInit() {
-		this.coordinates$.cities().subscribe((data) => {
-			this.cCities = data;
-			this.initMap();
+		this.getData$.findStates().subscribe((data) => {
+			this.casesS.push(data);
 		});
-		this.coordinates$.states().subscribe((data) => {
-			this.cStates = data;
+
+		this.getData$.findCities().subscribe((data) => {
+			this.casesC.push(data);
+			this.initMap();
 		});
 	}
 
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
 		let marksStates: Array<any> = [];
 		let isClicked = false;
 
-		for (let citie of this.cCities) {
+		for (let citie of this.casesC) {
 			let marker = L.circleMarker([citie.latitude, citie.longitude], {
 				color: "#3388ff",
 				title: citie.nome,
@@ -54,18 +54,16 @@ export class AppComponent implements OnInit {
 				},
 			});
 
-			this.getData$.findCity(citie.nome, citie.codigo_uf).subscribe((data) => {
-				marker.bindPopup(
-					L.popup({ maxWidth: 550 }).setContent(`
-				<h5> ${citie.nome} </h5> 
-				Casos confirmados: <b>${data["cases"]}</b></br>
-				Óbitos: <b>5</b>
-				`),
-				);
-				marksCities.push(marker);
-			});
+			marker.bindPopup(
+				L.popup({ maxWidth: 550 }).setContent(`
+			<h5> ${citie.nome} </h5> 
+			Casos confirmados: <b>${citie.totalCases}</b></br>
+			Óbitos: <b>${citie.deaths}</b>
+			`),
+			);
+			marksCities.push(marker);
 		}
-		for (let state of this.cStates) {
+		for (let state of this.casesS) {
 			let marker = L.circleMarker([state.latitude, state.longitude], {
 				color: "#3388ff",
 				radius: 20,
@@ -91,11 +89,12 @@ export class AppComponent implements OnInit {
 
 			marker.bindPopup(
 				L.popup({ maxWidth: 650 }).setContent(`
-				<h5> ${state.nome} </h5> 
-				Casos confirmados: <b>5</b></br>
-				Óbitos: <b>5</b>
-			`),
+					<h5> ${state.nome} </h5> 
+					Casos confirmados: <b>${state["cases"]}</b></br>
+					Óbitos: <b>5</b>
+				`),
 			);
+
 			marksStates.push(marker);
 		}
 

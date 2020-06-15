@@ -8,7 +8,11 @@ import { HttpClient } from "@angular/common/http";
 export class AppService {
 	constructor(private http: HttpClient) {}
 
-	findCity(city: string, state: string) {
-		return this.http.get(`http://localhost:5000/cidade?nome=${city}&estado=${state}/`);
+	findCities() {
+		return this.http.get(`http://172.18.18.241:5000/cidade/`);
+	}
+
+	findStates() {
+		return this.http.get(`http://172.18.18.241:5000/estado/`);
 	}
 }
