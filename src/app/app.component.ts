@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { DatePipe } from "@angular/common";
 import * as L from "leaflet";
 import "leaflet-search";
 import { AppService } from "./app.service";
@@ -13,7 +14,7 @@ export class AppComponent implements OnInit {
 	private casesS: any;
 	private casesC: any;
 
-	constructor(public getData$: AppService) {}
+	constructor(public getData$: AppService, private datePipe: DatePipe) {}
 
 	ngOnInit() {
 		this.getData$.findStates().subscribe((states) => {
@@ -34,7 +35,7 @@ export class AppComponent implements OnInit {
 		for (let citie of this.casesC) {
 			let marker = L.circleMarker([citie.latitude, citie.longitude], {
 				color: "#3388ff",
-				title: citie.city,
+				title: citie.cidade,
 			});
 
 			marker.on({
@@ -53,12 +54,13 @@ export class AppComponent implements OnInit {
 					this.openPopup();
 				},
 			});
-
+			let data = this.datePipe.transform(new Date(citie.data), "dd-MM-yyyy");
 			marker.bindPopup(
 				L.popup({ maxWidth: 550 }).setContent(`
-			<h5> ${citie.city} </h5> 
-			Casos confirmados: <b>${citie.totalCases}</b></br>
-			Óbitos: <b>${citie.deaths}</b>
+			<h5> ${citie.cidade} </h5> 
+			Casos confirmados: <b>${citie.casos_confirmados}</b></br>
+			Óbitos: <b>${citie.obitos}</b></br>
+			Última atualização: <b>${data}</b>
 			`),
 			);
 			marksCities.push(marker);
@@ -67,7 +69,7 @@ export class AppComponent implements OnInit {
 			let marker = L.circleMarker([state.latitude, state.longitude], {
 				color: "#3388ff",
 				radius: 20,
-				title: state.name,
+				title: state.nome,
 			});
 
 			marker.on({
@@ -86,12 +88,15 @@ export class AppComponent implements OnInit {
 					this.openPopup();
 				},
 			});
-
+			let data = this.datePipe.transform(new Date(state.data), "dd-MM-yyyy");
 			marker.bindPopup(
 				L.popup({ maxWidth: 650 }).setContent(`
-					<h5> ${state.name} </h5> 
-					Casos confirmados: <b>${state.totalCases}</b></br>
-					Óbitos: <b>${state.deaths}</b>
+					<h5> ${state.nome} </h5> 
+					Casos confirmados: <b>${state.casos_confirmados}</b></br>
+					Casos suspeitos: <b>${state.suspeitos}</b></br>
+					Recuperados: <b>${state.recuperados}</b></br>
+					Óbitos: <b>${state.obitos}</b></br>
+					Última atualização: <b>${data}</b>
 				`),
 			);
 
