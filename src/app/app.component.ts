@@ -16,14 +16,14 @@ export class AppComponent implements OnInit {
 	constructor(public getData$: AppService) {}
 
 	ngOnInit() {
-		this.getData$.findStates().subscribe((data) => {
-			this.casesS = data;
-		});
+		this.getData$.findStates().subscribe((states) => {
+			this.casesS = JSON.parse(states.toString());
 
-		this.getData$.findCities().subscribe((data) => {
-			this.casesC = data;
+			this.getData$.findCities().subscribe((cities) => {
+				this.casesC = JSON.parse(cities.toString());
+				this.initMap();
+			});
 		});
-		this.initMap();
 	}
 
 	initMap() {
@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
 		for (let citie of this.casesC) {
 			let marker = L.circleMarker([citie.latitude, citie.longitude], {
 				color: "#3388ff",
-				title: citie.nome,
+				title: citie.city,
 			});
 
 			marker.on({
@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
 
 			marker.bindPopup(
 				L.popup({ maxWidth: 550 }).setContent(`
-			<h5> ${citie.nome} </h5> 
+			<h5> ${citie.city} </h5> 
 			Casos confirmados: <b>${citie.totalCases}</b></br>
 			Óbitos: <b>${citie.deaths}</b>
 			`),
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
 			let marker = L.circleMarker([state.latitude, state.longitude], {
 				color: "#3388ff",
 				radius: 20,
-				title: state.nome,
+				title: state.state,
 			});
 
 			marker.on({
@@ -89,9 +89,9 @@ export class AppComponent implements OnInit {
 
 			marker.bindPopup(
 				L.popup({ maxWidth: 650 }).setContent(`
-					<h5> ${state.nome} </h5> 
-					Casos confirmados: <b>${state["cases"]}</b></br>
-					Óbitos: <b>5</b>
+					<h5> ${state.state} </h5> 
+					Casos confirmados: <b>${state.totalCases}</b></br>
+					Óbitos: <b>${state.deaths}</b>
 				`),
 			);
 
