@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
 			let marker = L.circleMarker([state.latitude, state.longitude], {
 				color: "#3388ff",
 				radius: 20,
-				title: state.state,
+				title: state.name,
 			});
 
 			marker.on({
@@ -89,7 +89,7 @@ export class AppComponent implements OnInit {
 
 			marker.bindPopup(
 				L.popup({ maxWidth: 650 }).setContent(`
-					<h5> ${state.state} </h5> 
+					<h5> ${state.name} </h5> 
 					Casos confirmados: <b>${state.totalCases}</b></br>
 					Óbitos: <b>${state.deaths}</b>
 				`),
