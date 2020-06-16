@@ -129,7 +129,7 @@ export class AppComponent implements OnInit {
 
 		var searchLayer = L.layerGroup(marksCities.concat(marksStates)).addTo(this.map);
 		//... adding data in searchLayer ...
-		this.map.addControl(new L.Control.Search({ layer: searchLayer, zoom: 11 }));
+		this.map.addControl(new L.Control.Search({ layer: searchLayer, zoom: 11, marker: false }));
 
 		let overlayMaps = {
 			Estados: states,
