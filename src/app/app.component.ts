@@ -54,7 +54,8 @@ export class AppComponent implements OnInit {
 					this.openPopup();
 				},
 			});
-			let data = this.datePipe.transform(new Date(citie.data), "dd-MM-yyyy");
+			let data =
+				citie.data.substring(8, 10) + "/" + citie.data.substring(5, 7) + "/" + citie.data.substring(0, 4);
 			marker.bindPopup(
 				L.popup({ maxWidth: 550 }).setContent(`
 			<h5> ${citie.cidade} </h5> 
@@ -88,7 +89,8 @@ export class AppComponent implements OnInit {
 					this.openPopup();
 				},
 			});
-			let data = this.datePipe.transform(new Date(state.data), "dd-MM-yyyy");
+			let data =
+				state.data.substring(8, 10) + "/" + state.data.substring(5, 7) + "/" + state.data.substring(0, 4);
 			marker.bindPopup(
 				L.popup({ maxWidth: 650 }).setContent(`
 					<h5> ${state.nome} </h5> 
